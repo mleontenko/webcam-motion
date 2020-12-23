@@ -1,6 +1,9 @@
 import cv2, time
+from datetime import datetime
 
 first_frame=None
+status_list=[None, None]
+times=[]
 
 video=cv2.VideoCapture(0)
 
@@ -30,6 +33,13 @@ while True:
         (x, y, w, h)=cv2.boundingRect(contour)
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 3)
 
+    status_list.append(status)
+
+    if status_list[-1]==1 and status_list[-2]==0:
+        times.append(datetime.now())
+    if status_list[-1]==0 and status_list[-2]==1:
+        times.append(datetime.now())
+
     cv2.imshow("Gray Frame",gray)
     cv2.imshow("Delta Frame",delta_frame)
     cv2.imshow("Threshold Frame",thresh_frame)
@@ -40,8 +50,12 @@ while True:
     #print(delta_frame)
 
     if key==ord('q'):
+        if status==1:
+            times.append(datetime.now())
         break
-    print(status)
+
+print(status_list)
+print(times)
 
 video.release()
 cv2.destroyAllWindows
